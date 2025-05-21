@@ -93,8 +93,8 @@ class ProductoFactory extends Factory
         return [
             'nombre' => $nombre,
             'descripcion' => $descripciones[$nombre] ?? 'Producto de alta calidad.',
-            'precio' => $this->faker->randomFloat(2, 39, 299),
-            'stock' => $this->faker->numberBetween(5, 50),
+            'precio' => $this->faker->randomFloat(2, 39, 99), // Precio menor a 100 soles
+            'stock' => 20, // Stock fijo de 20 prendas
             'imagen' => $producto['img'],
             'categoria' => $categoria,
         ];

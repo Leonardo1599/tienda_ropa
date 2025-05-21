@@ -53,6 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/ordenes', [OrdenController::class, 'adminIndex'])->name('admin.ordenes');
     Route::get('/admin/pasarelas', [PasarelaController::class, 'edit'])->name('admin.pasarelas');
     Route::post('/admin/pasarelas', [PasarelaController::class, 'update'])->name('admin.pasarelas.update');
+    Route::put('/admin/ordenes/{orden}/estado', [OrdenController::class, 'actualizarEstado'])->name('admin.ordenes.estado');
+    Route::put('/admin/ordenes/{orden}/comprobante', [OrdenController::class, 'validarComprobante'])->name('admin.ordenes.comprobante');
 });
 
 // API para pagos

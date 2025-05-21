@@ -9,7 +9,7 @@ class Orden extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['user_id', 'total', 'status', 'metodo_pago', 'comprobante_pago'];
+    protected $fillable = ['user_id', 'total', 'status', 'metodo_pago', 'comprobante_pago', 'comprobante_validado', 'comentario_admin'];
 
     public function user()
     {

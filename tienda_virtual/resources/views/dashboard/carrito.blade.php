@@ -85,10 +85,29 @@
                             <div id="pago-info"></div>
                             <div id="qr-img" class="mt-2"></div>
                         </div>
+                        <div class="col-md-6">
+                            <label for="razon_social" class="form-label">Razón Social (opcional)</label>
+                            <input type="text" name="razon_social" id="razon_social" class="form-control" maxlength="191">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ruc" class="form-label">RUC (opcional)</label>
+                            <input type="text" name="ruc" id="ruc" class="form-control" maxlength="15">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" id="nombre" class="form-control" maxlength="191" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dni" class="form-label">DNI <span class="text-danger">*</span></label>
+                            <input type="text" name="dni" id="dni" class="form-control" maxlength="15" required>
+                        </div>
                         <div class="col-md-12 mt-2">
                             <label for="comprobante_pago" class="form-label">Comprobante de pago (PDF) <span class="text-danger">*</span></label>
                             <input type="file" name="comprobante_pago" id="comprobante_pago" class="form-control" accept="application/pdf" required>
                             <small class="text-danger">Obligatorio: Sube tu comprobante de pago en PDF (máx 4MB).</small>
+                        </div>
+                        <div class="col-md-12">
+                            <div id="tipo-comprobante" class="alert alert-info p-2 mb-2" style="display:none;"></div>
                         </div>
                         <div class="col-md-12" id="paypal-btn-container" style="display:none;"></div>
                         <div class="col-md-12" id="izipay-btn-container" style="display:none;"></div>
@@ -105,7 +124,7 @@
         <a href="{{ route('dashboard.index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Seguir comprando</a>
     </div>
 </div>
-<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=Afl9yTBjVCHzB2bSP80f5zRj4ykDQY1uNKTwX5Z34izsAPYLSqI5jiUEc9WuGP8YACIq34s0lDEJUxD1&currency=USD"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('metodo_pago');
@@ -122,7 +141,12 @@
             if(metodo === 'yape') {
                 html = `<b>Yape:</b><br>`;
                 html += `{!! $yape_numero ? '<span class=\"text-primary\">Número: ' . $yape_numero . '</span><br>' : '<span class=\"text-muted\">Número: No disponible</span><br>' !!}`;
-                @if($yape_qr)
+                @if($yape_numero && $total)
+                    // QR dinámico con Google Chart API (Yape)
+                    let yapeData = `00020101021126360016A0000006770101120115{{$yape_numero}}520400005303604054{{$total}}5802PE5920Tienda Virtual6033Pago de orden en tienda virtual6304`;
+                    let qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(yapeData)}`;
+                    qr = `<img src='${qrUrl}' alt='QR Yape' style='max-width:150px;'>`;
+                @elseif($yape_qr)
                     qr = `<img src='{{ asset('storage/' . $yape_qr) }}' alt='QR Yape' style='max-width:150px;'>`;
                 @else
                     qr = `<span class='text-muted'>QR: No disponible</span>`;
@@ -130,7 +154,12 @@
             } else if(metodo === 'plin') {
                 html = `<b>Plin:</b><br>`;
                 html += `{!! $plin_numero ? '<span class=\"text-primary\">Número: ' . $plin_numero . '</span><br>' : '<span class=\"text-muted\">Número: No disponible</span><br>' !!}`;
-                @if($plin_qr)
+                @if($plin_numero && $total)
+                    // QR dinámico con Google Chart API (Plin)
+                    let plinData = `00020101021126360016A0000006770101120115{{$plin_numero}}520400005303604054{{$total}}5802PE5920Tienda Virtual6033Pago de orden en tienda virtual6304`;
+                    let qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(plinData)}`;
+                    qr = `<img src='${qrUrl}' alt='QR Plin' style='max-width:150px;'>`;
+                @elseif($plin_qr)
                     qr = `<img src='{{ asset('storage/' . $plin_qr) }}' alt='QR Plin' style='max-width:150px;'>`;
                 @else
                     qr = `<span class='text-muted'>QR: No disponible</span>`;
@@ -163,7 +192,6 @@
                                     'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
                                 },
                                 body: JSON.stringify({
-                                    orden_id: '{{ optional($ordenExistente)->id ?? '' }}',
                                     paypal_order_id: data.orderID
                                 })
                             })
@@ -193,6 +221,26 @@
                 mostrarQR(this.value);
             });
             if(select.value) mostrarQR(select.value);
+        }
+
+        function actualizarTipoComprobante() {
+            const razon = document.getElementById('razon_social').value.trim();
+            const ruc = document.getElementById('ruc').value.trim();
+            const tipoDiv = document.getElementById('tipo-comprobante');
+            if (ruc.length === 11 && razon.length > 0) {
+                tipoDiv.textContent = 'Se emitirá: Factura';
+                tipoDiv.style.display = 'block';
+            } else {
+                tipoDiv.textContent = 'Se emitirá: Boleta';
+                tipoDiv.style.display = 'block';
+            }
+        }
+        const razon = document.getElementById('razon_social');
+        const ruc = document.getElementById('ruc');
+        if (razon && ruc) {
+            razon.addEventListener('input', actualizarTipoComprobante);
+            ruc.addEventListener('input', actualizarTipoComprobante);
+            actualizarTipoComprobante();
         }
     });
 </script>

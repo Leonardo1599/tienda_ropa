@@ -31,6 +31,10 @@ class OrdenController extends Controller
         $request->validate([
             'metodo_pago' => 'required|in:yape,plin,transferencia,izipay,paypal',
             'comprobante_pago' => 'required|file|mimes:pdf|max:4096',
+            'nombre' => 'required|string|max:191',
+            'dni' => 'required|string|max:15',
+            'razon_social' => 'nullable|string|max:191',
+            'ruc' => 'nullable|string|max:15',
         ]);
 
         // Validar que el cliente suba el comprobante si es requerido
@@ -74,6 +78,10 @@ class OrdenController extends Controller
                 'status' => 'pendiente',
                 'metodo_pago' => $request->metodo_pago,
                 'comprobante_pago' => $comprobantePath,
+                'razon_social' => $request->razon_social,
+                'ruc' => $request->ruc,
+                'nombre' => $request->nombre,
+                'dni' => $request->dni,
             ]);
 
             // Emitir comprobante PDF automáticamente al crear la orden
@@ -239,5 +247,33 @@ class OrdenController extends Controller
         $orden->save();
         // Aquí puedes guardar el ID de Izipay en la orden si lo deseas
         return response()->json(['success' => true]);
+    }
+
+    public function actualizarEstado(Request $request, Orden $orden)
+    {
+        if (!auth()->user() || !auth()->user()->is_admin) {
+            abort(403);
+        }
+        $request->validate([
+            'status' => 'required|in:pendiente,procesando,completado,cancelado',
+        ]);
+        $orden->status = $request->status;
+        $orden->save();
+        return back()->with('success', 'Estado de la orden actualizado');
+    }
+
+    public function validarComprobante(Request $request, Orden $orden)
+    {
+        if (!auth()->user() || !auth()->user()->is_admin) {
+            abort(403);
+        }
+        $request->validate([
+            'comprobante_validado' => 'required|boolean',
+            'comentario_admin' => 'nullable|string|max:255',
+        ]);
+        $orden->comprobante_validado = $request->comprobante_validado;
+        $orden->comentario_admin = $request->comentario_admin;
+        $orden->save();
+        return back()->with('success', 'Validación de comprobante actualizada');
     }
 }

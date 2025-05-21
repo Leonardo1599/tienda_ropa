@@ -16,6 +16,11 @@
         <h2>Comprobante de Orden #{{ $orden->id }}</h2>
         <p>Cliente: {{ $user->name }}<br>Email: {{ $user->email }}</p>
         <p>Fecha: {{ $orden->created_at->format('d/m/Y H:i') }}</p>
+        <p><b>Tipo de comprobante:</b> {{ ($orden->ruc && $orden->razon_social) ? 'Factura' : 'Boleta' }}</p>
+        @if($orden->razon_social || $orden->ruc)
+            <p><b>Razón Social:</b> {{ $orden->razon_social ?? '-' }}<br><b>RUC:</b> {{ $orden->ruc ?? '-' }}</p>
+        @endif
+        <p><b>Nombre:</b> {{ $orden->nombre }}<br><b>DNI:</b> {{ $orden->dni }}</p>
     </div>
     <table class="table">
         <thead>
