@@ -68,53 +68,55 @@
             </div>
             <div class="card shadow-sm mb-4">
                 <div class="card-body p-0">
-                    <h5 class="card-title p-3">Método de Pago</h5>
-                    <form action="{{ route('ordenes.store') }}" method="POST" class="row g-3 align-items-center" enctype="multipart/form-data">
-                        @csrf
-                        <div class="col-md-4">
-                            <select name="metodo_pago" class="form-select" id="metodo_pago" required>
-                                <option value="">Selecciona método de pago</option>
-                                <option value="yape">Yape</option>
-                                <option value="plin">Plin</option>
-                                <option value="transferencia">Transferencia</option>
-                                <option value="izipay">Izipay</option>
-                                <option value="paypal">PayPal</option>
-                            </select>
-                        </div>
-                        <div class="col-md-8" id="pago-instruccion" style="display:none;">
-                            <div id="pago-info"></div>
-                            <div id="qr-img" class="mt-2"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="razon_social" class="form-label">Razón Social (opcional)</label>
-                            <input type="text" name="razon_social" id="razon_social" class="form-control" maxlength="191">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="ruc" class="form-label">RUC (opcional)</label>
-                            <input type="text" name="ruc" id="ruc" class="form-control" maxlength="15">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="nombre" class="form-label">Nombre completo <span class="text-danger">*</span></label>
-                            <input type="text" name="nombre" id="nombre" class="form-control" maxlength="191" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="dni" class="form-label">DNI <span class="text-danger">*</span></label>
-                            <input type="text" name="dni" id="dni" class="form-control" maxlength="15" required>
-                        </div>
-                        <div class="col-md-12 mt-2">
-                            <label for="comprobante_pago" class="form-label">Comprobante de pago (PDF) <span class="text-danger">*</span></label>
-                            <input type="file" name="comprobante_pago" id="comprobante_pago" class="form-control" accept="application/pdf" required>
-                            <small class="text-danger">Obligatorio: Sube tu comprobante de pago en PDF (máx 4MB).</small>
-                        </div>
-                        <div class="col-md-12">
-                            <div id="tipo-comprobante" class="alert alert-info p-2 mb-2" style="display:none;"></div>
-                        </div>
-                        <div class="col-md-12" id="paypal-btn-container" style="display:none;"></div>
-                        <div class="col-md-12" id="izipay-btn-container" style="display:none;"></div>
-                        <div class="col-md-12 mt-3">
-                            <button class="btn btn-success btn-lg w-100">Finalizar compra <i class="bi bi-bag-check"></i></button>
-                        </div>
-                    </form>
+                    <h3 class="card-title p-3 text-center">Método de Pago</h3>
+                    <div class="w-100 px-2 px-sm-4 px-md-5 py-3 mx-auto" style="max-width: 500px;">
+                        <form action="{{ route('ordenes.store') }}" method="POST" class="row g-3 align-items-center" enctype="multipart/form-data">
+                            @csrf
+                            <div class="col-12 col-md-4">
+                                <select name="metodo_pago" class="form-select" id="metodo_pago" required>
+                                    <option value="">Selecciona método de pago</option>
+                                    <option value="yape">Yape</option>
+                                    <option value="plin">Plin</option>
+                                    <option value="transferencia">Transferencia</option>
+                                    <option value="izipay">Izipay</option>
+                                    <option value="paypal">PayPal</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-8" id="pago-instruccion" style="display:none;">
+                                <div id="pago-info"></div>
+                                <div id="qr-img" class="mt-2"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="razon_social" class="form-label">Razón Social (opcional)</label>
+                                <input type="text" name="razon_social" id="razon_social" class="form-control" maxlength="191">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="ruc" class="form-label">RUC (opcional)</label>
+                                <input type="text" name="ruc" id="ruc" class="form-control" maxlength="15">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="nombre" class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="191" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="dni" class="form-label">DNI <span class="text-danger">*</span></label>
+                                <input type="text" name="dni" id="dni" class="form-control" maxlength="15" required>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <label for="comprobante_pago" class="form-label">Comprobante de pago (PDF) <span class="text-danger">*</span></label>
+                                <input type="file" name="comprobante_pago" id="comprobante_pago" class="form-control" accept="application/pdf" required>
+                                <small class="text-danger">Obligatorio: Sube tu comprobante de pago en PDF (máx 4MB).</small>
+                            </div>
+                            <div class="col-12">
+                                <div id="tipo-comprobante" class="alert alert-info p-2 mb-2" style="display:none;"></div>
+                            </div>
+                            <div class="col-12" id="paypal-btn-container" style="display:none;"></div>
+                            <div class="col-12" id="izipay-btn-container" style="display:none;"></div>
+                            <div class="col-12 mt-3">
+                                <button class="btn btn-success btn-lg w-100">Finalizar compra <i class="bi bi-bag-check"></i></button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             @endif
